@@ -2,7 +2,7 @@ import pickle
 
 import numpy as np
 import pandas as pd
-from flask import Flask, app, jsonify, render_template, request, url_for
+from flask import Flask, app, jsonify, render_template, request, url_for,render_template
 
 app=Flask(__name__)
 ## load the model
