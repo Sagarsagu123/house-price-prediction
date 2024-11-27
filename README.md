@@ -10,7 +10,7 @@ machine learning
 
 create new environment
 '''
-conda create -p venv python==3,7 -y
+conda create -p venv python==3.7 -y
 '''
 
  
