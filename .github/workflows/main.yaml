@@ -16,11 +16,9 @@ jobs:
       # Step 2: Install Render CLI
       - name: Install Render CLI
         run: |
-          curl -LO https://github.com/render-examples/cli/releases/download/v1.0.0/render-linux-amd64
-          chmod +x render-linux-amd64
-          sudo mv render-linux-amd64 /usr/local/bin/render
+          curl -fsSL https://cli.render.com | bash
 
-      # Step 3: Check if Render CLI is installed properly (Optional Debugging)
+      # Step 3: Verify Render CLI Installation (Optional Debugging)
       - name: Verify Render CLI Installation
         run: |
           which render
