@@ -13,27 +13,25 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v2
 
-      # Step 2: Install Render CLI
-      - name: Install Render CLI
+      # Step 2: Build Docker Image
+      - name: Build Docker Image
         run: |
-          curl -fsSL https://cli.render.com | bash
+          docker build -t my-app .
 
-      # Step 3: Verify Render CLI Installation (Optional Debugging)
-      - name: Verify Render CLI Installation
-        run: |
-          which render
-          render --version
-
-      # Step 4: Authenticate with Render
-      - name: Authenticate with Render
+      # Step 3: Authenticate with Render (API)
+      - name: Authenticate with Render API
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          render login --api-key $RENDER_API_KEY
+          echo "Using Render API Key: $RENDER_API_KEY"
 
-      # Step 5: Deploy Docker container to Render
-      - name: Deploy to Render
+      # Step 4: Trigger deployment on Render
+      - name: Trigger Render Deployment
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+          RENDER_SERVICE_ID: ${{ secrets.RENDER_SERVICE_ID }}
         run: |
-          render deploy --service-id ${{ secrets.RENDER_SERVICE_ID }}
+          curl -X POST \
+            https://api.render.com/v1/services/${{ secrets.RENDER_SERVICE_ID }}/deploy \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json"
