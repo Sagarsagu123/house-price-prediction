@@ -7,6 +7,10 @@ machine learning
 
 2.[vs code IDE](htttps.//code.visualstudio.com)
 
+3.[Render](https://render.com/)
+
+4.[Docker](https://www.docker.com/)
+
 
 create new environment
 '''
