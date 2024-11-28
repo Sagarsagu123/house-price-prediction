@@ -13,22 +13,23 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2
 
-      ### ⬇ IMPORTANT PART ⬇ ###
       # Step 2: Install Render CLI.
       - name: Install Render CLI
         run: |
           curl -fsSL https://render.com/install | bash
+          echo "export PATH=$PATH:$HOME/.render-cli/bin" >> $HOME/.bashrc
+          source $HOME/.bashrc
 
       # Step 3: Authenticate with Render.
       - name: Authenticate with Render
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          render login --api-key $RENDER_API_KEY
+          $HOME/.render-cli/bin/render login --api-key $RENDER_API_KEY
 
       # Step 4: Build, Push, and Deploy Docker Container to Render.
       - name: Deploy to Render
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          render deploy --service-id ${{ secrets.RENDER_SERVICE_ID }}
+          $HOME/.render-cli/bin/render deploy --service-id ${{ secrets.RENDER_SERVICE_ID }}
