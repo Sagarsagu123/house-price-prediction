@@ -1,6 +1,6 @@
 name: Deploy to Render
 
-# Run the workflow on every push to the main branch.
+# Run the workflow on every push to the develop branch.
 on:
   push:
     branches: [develop]
@@ -14,30 +14,21 @@ jobs:
         uses: actions/checkout@v2
 
       ### ⬇ IMPORTANT PART ⬇ ###
-      - name: Build, Push, and Deploy Docker Container to Render # Custom step name
-        uses: gonuit/heroku-docker-deploy@v1.3.3 # Replacing Heroku step with Render commands
-        with:
-          # Below variables must be provided for Render deployment.
+      # Step 2: Install Render CLI.
+      - name: Install Render CLI
+        run: |
+          curl -fsSL https://render.com/install | bash
 
-          # The email address associated with your Render account.
-          email: ${{ secrets.RENDER_EMAIL }}
+      # Step 3: Authenticate with Render.
+      - name: Authenticate with Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          render login --api-key $RENDER_API_KEY
 
-          # Render API key associated with the provided user's email.
-          # API Key is available in Render dashboard under Account Settings -> API Keys.
-          heroku_api_key: ${{ secrets.RENDER_API_KEY }} # Replace 'heroku_api_key' with 'render_api_key'
-
-          # Name or ID of the Render service to which the build is to be sent.
-          # You can find the service ID in your Render dashboard.
-          heroku_app_name: ${{ secrets.RENDER_SERVICE_ID }} # Replace 'heroku_app_name' with 'render_service_id'
-
-          # Dockerfile directory (if not in the root, specify the folder path).
-          dockerfile_directory: ./
-
-          # Dockerfile name.
-          dockerfile_name: Dockerfile
-
-          # Additional Docker options.
-          docker_options: "--no-cache"
-
-          # Process type, optional for Render. Defaults to `web`.
-          process_type: web
+      # Step 4: Build, Push, and Deploy Docker Container to Render.
+      - name: Deploy to Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          render deploy --service-id ${{ secrets.RENDER_SERVICE_ID }}
