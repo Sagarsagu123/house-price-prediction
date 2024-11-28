@@ -10,26 +10,32 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Step 1: Check out the repository.
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v2
 
-      # Step 2: Install Render CLI.
+      # Step 2: Install Render CLI
       - name: Install Render CLI
         run: |
-          curl -fsSL https://render.com/install | bash
-          echo "export PATH=$PATH:$HOME/.render-cli/bin" >> $HOME/.bashrc
-          source $HOME/.bashrc
+          curl -LO https://github.com/render-examples/cli/releases/download/v1.0.0/render-linux-amd64
+          chmod +x render-linux-amd64
+          sudo mv render-linux-amd64 /usr/local/bin/render
 
-      # Step 3: Authenticate with Render.
+      # Step 3: Check if Render CLI is installed properly (Optional Debugging)
+      - name: Verify Render CLI Installation
+        run: |
+          which render
+          render --version
+
+      # Step 4: Authenticate with Render
       - name: Authenticate with Render
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          $HOME/.render-cli/bin/render login --api-key $RENDER_API_KEY
+          render login --api-key $RENDER_API_KEY
 
-      # Step 4: Build, Push, and Deploy Docker Container to Render.
+      # Step 5: Deploy Docker container to Render
       - name: Deploy to Render
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          $HOME/.render-cli/bin/render deploy --service-id ${{ secrets.RENDER_SERVICE_ID }}
+          render deploy --service-id ${{ secrets.RENDER_SERVICE_ID }}
